@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 222 24% 6%;
+  --foreground: 220 24% 90%;
+  --border: 220 16% 17%;
+  --ring: 156 62% 71%;
+  --radius: 3px;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0b0e14;
+  color: #e3e8ef;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+}
+
+/* Subtle CRT-style texture: one restrained decorative moment, applied once to the
+   whole page rather than repeated per panel. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.012) 0px,
+    rgba(255, 255, 255, 0.012) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% -10%, rgba(110, 231, 183, 0.05), transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(164, 140, 242, 0.04), transparent 45%);
+}
+
+#__next,
+main {
+  position: relative;
+  z-index: 1;
+}
+
+::selection {
+  background: rgba(110, 231, 183, 0.25);
+  color: #f4fff9;
+}
+
+/* Scrollbar — thin, terminal-flavored */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0e14;
+}
+::-webkit-scrollbar-thumb {
+  background: #232936;
+  border: 2px solid #0b0e14;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #343d4f;
+}
+
+:focus-visible {
+  outline: 2px solid #6ee7b7;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
