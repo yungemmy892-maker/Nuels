@@ -57,7 +57,7 @@ export function Hero() {
               Emmanuel Okon
             </h1>
             <p className="mt-3 text-lg text-ink sm:text-xl">
-              Full-stack engineer - <span className="text-mint">React</span>,{" "}
+              Full-stack developer - <span className="text-mint">React</span>,{" "}
               <span className="text-mint">Next.js</span>, <span className="text-mint">Django</span> &{" "}
               <span className="text-mint">FastAPI</span>
             </p>
