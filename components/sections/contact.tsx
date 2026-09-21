@@ -4,13 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Github, Twitter, Music2, Mail, Send, Loader2, Check, AlertTriangle } from "lucide-react";
 import { TerminalPane } from "@/components/terminal-pane";
 import { Button } from "@/components/ui/button";
-import {
-  social,
-  CONTACT_EMAIL,
-  EMAILJS_SERVICE_ID,
-  EMAILJS_TEMPLATE_ID,
-  EMAILJS_PUBLIC_KEY,
-} from "@/lib/data";
+import { social, CONTACT_EMAIL } from "@/lib/data";
 
 const icons: Record<string, React.ComponentType<{ className?: string }>> = {
   GitHub: Github,
@@ -27,6 +21,7 @@ export function Contact() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
   function validate() {
     const next: Record<string, string> = {};
@@ -43,29 +38,37 @@ export function Contact() {
     e.preventDefault();
     if (!validate()) return;
     setStatus("sending");
+    setErrorDetail(null);
     try {
-      const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+      if (!accessKey) {
+        throw new Error(
+          "Missing NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY — get a free key at web3forms.com and add it to your env vars."
+        );
+      }
+
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          service_id: EMAILJS_SERVICE_ID,
-          template_id: EMAILJS_TEMPLATE_ID,
-          user_id: EMAILJS_PUBLIC_KEY,
-          template_params: {
-            from_name: name.trim(),
-            from_email: email.trim(),
-            message: message.trim(),
-            to_email: CONTACT_EMAIL,
-          },
+          access_key: accessKey,
+          name: name.trim(),
+          email: email.trim(),
+          message: message.trim(),
+          subject: `New message from ${name.trim()} via portfolio`,
         }),
       });
-      if (!res.ok) throw new Error(await res.text());
+
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || "Submission was rejected");
+
       setStatus("sent");
       setName("");
       setEmail("");
       setMessage("");
     } catch (err) {
-      console.error("[EmailJS error]", err);
+      console.error("[Web3Forms error]", err);
+      setErrorDetail(err instanceof Error ? err.message : null);
       setStatus("error");
     }
   }
@@ -166,13 +169,14 @@ export function Contact() {
 
               {status === "sent" && (
                 <p className="flex items-center gap-2 text-sm text-mint">
-                  <Check className="h-4 w-4" /> Message sent — I&apos;ll get back to you soon.
+                  <Check className="h-4 w-4" /> Message sent I&apos;ll get back to you soon.
                 </p>
               )}
               {status === "error" && (
                 <p className="flex items-center gap-2 text-sm text-danger">
                   <AlertTriangle className="h-4 w-4" /> Something went wrong — email me directly at{" "}
                   {CONTACT_EMAIL}
+                  {errorDetail ? ` (${errorDetail})` : ""}
                 </p>
               )}
             </form>

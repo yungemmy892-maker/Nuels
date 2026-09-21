@@ -48,8 +48,8 @@ export function About() {
             <div className="flex flex-col gap-5">
               <div className="relative aspect-square w-full overflow-hidden border border-line-bright">
                 <Image
-                  src="/profile.jpg"
-                  alt="Emmanuel Okon"
+                    src="/emmanuel-okon-full-stack-developer.jpg"
+                    alt="Emmanuel Okon, full-stack developer"
                   fill
                   sizes="220px"
                   className="object-cover grayscale contrast-125"
